@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - WEB_APP_URL=${WEB_APP_URL}
+    env_file:
+      - .env
+
+  bot:
+    build: .
+    command: ["python", "bot.py"]
+    depends_on:
+      - web
+    environment:
+      - WEB_APP_URL=http://web:8000/game
+    env_file:
+      - .env
