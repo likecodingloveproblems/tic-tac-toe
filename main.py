@@ -1,12 +1,9 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
-import os
 from datetime import datetime
-import json
 
 app = FastAPI(title="Telegram Tic-Tac-Toe Mini App")
 
@@ -40,19 +37,26 @@ class GameResponse(BaseModel):
 def check_winner(board):
     """Check if there's a winner in the current board state"""
     winning_combinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],  # rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],  # columns
-        [0, 4, 8], [2, 4, 6]  # diagonals
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],  # rows
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],  # columns
+        [0, 4, 8],
+        [2, 4, 6],  # diagonals
     ]
 
     for combo in winning_combinations:
-        if (board[combo[0]] == board[combo[1]] == board[combo[2]]
-                and board[combo[0]] != ''):
+        if (
+            board[combo[0]] == board[combo[1]] == board[combo[2]]
+            and board[combo[0]] != ""
+        ):
             return board[combo[0]]
 
     # Check for tie
-    if '' not in board:
-        return 'tie'
+    if "" not in board:
+        return "tie"
 
     return None
 
@@ -60,11 +64,11 @@ def check_winner(board):
 def create_new_game():
     """Create a new game instance"""
     return GameState(
-        board=[''] * 9,
-        current_player='X',
+        board=[""] * 9,
+        current_player="X",
         winner=None,
         game_over=False,
-        created_at=datetime.now()
+        created_at=datetime.now(),
     )
 
 
@@ -85,7 +89,7 @@ async def new_game():
         current_player=games[game_id].current_player,
         winner=games[game_id].winner,
         game_over=games[game_id].game_over,
-        message="New game created!"
+        message="New game created!",
     )
 
 
@@ -102,7 +106,7 @@ async def get_game(game_id: str):
         current_player=game.current_player,
         winner=game.winner,
         game_over=game.game_over,
-        message="Game state retrieved"
+        message="Game state retrieved",
     )
 
 
@@ -120,7 +124,7 @@ async def make_move(move: MoveRequest):
     if move.position < 0 or move.position > 8:
         raise HTTPException(status_code=400, detail="Invalid position")
 
-    if game.board[move.position] != '':
+    if game.board[move.position] != "":
         raise HTTPException(status_code=400, detail="Position already taken")
 
     if move.player != game.current_player:
@@ -134,13 +138,13 @@ async def make_move(move: MoveRequest):
     if winner:
         game.winner = winner
         game.game_over = True
-        if winner == 'tie':
+        if winner == "tie":
             message = "It's a tie!"
         else:
             message = f"Player {winner} wins!"
     else:
         # Switch players
-        game.current_player = 'O' if game.current_player == 'X' else 'X'
+        game.current_player = "O" if game.current_player == "X" else "X"
         message = f"Player {game.current_player}'s turn"
 
     return GameResponse(
@@ -149,7 +153,7 @@ async def make_move(move: MoveRequest):
         current_player=game.current_player,
         winner=game.winner,
         game_over=game.game_over,
-        message=message
+        message=message,
     )
 
 

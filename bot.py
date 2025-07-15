@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -10,15 +9,14 @@ load_dotenv()
 
 # Enable logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
 # Bot token from BotFather
-BOT_TOKEN = os.getenv('BOT_TOKEN')
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 # Your web app URL (where your FastAPI app is hosted)
-WEB_APP_URL = os.getenv('WEB_APP_URL', 'https://your-app-url.com/game')
+WEB_APP_URL = os.getenv("WEB_APP_URL", "https://your-app-url.com/game")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -27,7 +25,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # Create the web app button
     keyboard = [
-        [InlineKeyboardButton("🎮 Play Tic-Tac-Toe", web_app=WebAppInfo(url=WEB_APP_URL))]
+        [
+            InlineKeyboardButton(
+                "🎮 Play Tic-Tac-Toe", web_app=WebAppInfo(url=WEB_APP_URL)
+            )
+        ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -39,10 +41,7 @@ Ready to play the classic game right here in Telegram?
 Click the button below to start playing:
     """
 
-    await update.message.reply_html(
-        welcome_message,
-        reply_markup=reply_markup
-    )
+    await update.message.reply_html(welcome_message, reply_markup=reply_markup)
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -77,13 +76,16 @@ Have fun playing! 🎯
 async def play_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send the game directly when /play is issued."""
     keyboard = [
-        [InlineKeyboardButton("🎮 Play Tic-Tac-Toe", web_app=WebAppInfo(url=WEB_APP_URL))]
+        [
+            InlineKeyboardButton(
+                "🎮 Play Tic-Tac-Toe", web_app=WebAppInfo(url=WEB_APP_URL)
+            )
+        ]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        "🎮 Ready to play Tic-Tac-Toe?",
-        reply_markup=reply_markup
+        "🎮 Ready to play Tic-Tac-Toe?", reply_markup=reply_markup
     )
 
 
@@ -114,5 +116,5 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
